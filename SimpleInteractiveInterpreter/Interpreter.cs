@@ -11,7 +11,7 @@ namespace SimpleInteractiveInterpreter
         }
 
         public List<string> tokenize(string input) {
-            input = input + ")";
+            input += ")";
             var tokens = new List<string>();
             var rgxMain = new Regex("=>|[-+*/%=\\(\\)]|[A-Za-z_][A-Za-z0-9_]*|[0-9]*(\\.?[0-9]+)");
             var matches = rgxMain.Matches(input);
