@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace SimpleInteractiveInterpreter
 {
@@ -11,11 +12,10 @@ namespace SimpleInteractiveInterpreter
 
         public List<string> tokenize(string input) {
             input = input + ")";
-            List<string> tokens = new List<string>();
-            Regex rgxMain = new Regex("=>|[-+*/%=\\(\\)]|[A-Za-z_][A-Za-z0-9_]*|[0-9]*(\\.?[0-9]+)");
-            MatchCollection matches = rgxMain.Matches(input);
-            foreach (Match m in matches)
-                tokens.Add(m.Groups[0].Value);
+            var tokens = new List<string>();
+            var rgxMain = new Regex("=>|[-+*/%=\\(\\)]|[A-Za-z_][A-Za-z0-9_]*|[0-9]*(\\.?[0-9]+)");
+            var matches = rgxMain.Matches(input);
+            tokens.AddRange(matches.Cast<Match>().Select(m => m.Groups[0].Value));
             return tokens;
         }
     }
