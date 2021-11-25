@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System.Data;
-
-namespace SimpleInteractiveInterpreter
+﻿namespace SimpleInteractiveInterpreter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using System.Linq;
+    using System.Data;
+    using System.Globalization;
+
     public partial class Interpreter
     {
-        private Dictionary<string, double> _variableList = new Dictionary<string, double>();
+        private readonly Dictionary<string, double> _variableList = new Dictionary<string, double>();
 
         // ReSharper disable once InconsistentNaming
 #pragma warning disable IDE1006 // Naming Styles
@@ -16,17 +17,26 @@ namespace SimpleInteractiveInterpreter
 #pragma warning restore IDE1006 // Naming Styles
             var tokens = tokenize(input);
 
-            if (double.TryParse(tokens[0], out _)) {
-                var v = new DataTable().Compute(input, null).ToString();
-                return double.Parse(v);
-            }
+            if (double.TryParse(tokens[0], out _))
+                return Compute(input);
 
-            if (_variableList.ContainsKey(tokens[0]))
-                _variableList[tokens[0]] += double.Parse(tokens[2]);
-            else
+            else if (_variableList.ContainsKey(tokens[0])) {
+                var oldValue = _variableList.Keys.First(x => x == tokens[0]);
+                var newValue = _variableList[tokens[0]].ToString(CultureInfo.InvariantCulture);
+                return Compute(input.Replace(oldValue, newValue));
+            }
+            else if (tokens[1] == "=") {
                 _variableList.Add(tokens[0], double.Parse(tokens[2]));
-            return double.Parse(tokens[2]);
+
+                return double.Parse(tokens[2]);
+            }
+            else
+                throw new InvalidOperationException("ERROR: Invalid identifier. No variable with name 'y' was found.");
+
+            throw new Exception("???");
         }
+
+        private static double? Compute(string input) => double.Parse(new DataTable().Compute(input, null).ToString());
 
         // ReSharper disable once InconsistentNaming
 #pragma warning disable IDE1006 // Naming Styles
