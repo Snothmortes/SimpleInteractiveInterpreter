@@ -16,6 +16,18 @@
         public double? input(string input) {
 #pragma warning restore IDE1006 // Naming Styles
             var tokens = tokenize(input);
+            var stack = new Stack<string>();
+
+            foreach (var item in tokens) {
+                if (item.Any(x => char.IsLetter(x) || char.IsSymbol(x))) {
+                    if (variable) { }
+                    if (symbol) { }
+                }
+                else {
+
+                }
+
+            }
 
             if (double.TryParse(tokens[0], out _))
                 return Compute(input);
